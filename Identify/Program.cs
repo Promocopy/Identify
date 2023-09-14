@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
-
+  
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
 // Add services to the container.
@@ -30,10 +30,15 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<PersonContext>();
+    context.Database.EnsureCreated();
 }
 
 app.UseHttpsRedirection();
